@@ -30,7 +30,7 @@ public class ReportServiceImpl implements ReportService {
         try {
             soldItemDaySumDtosDtoList = webClient.get()
                     .uri(uriBuilder -> uriBuilder
-                            .path("/api/v1/outlet/sold-items-sum/{outletName}/{date}")
+                            .path("/api/v1/outlet/sold-items-summ/{outletName}/{date}")
                             .build(requestDailySalesReportDto.getOutletName(), requestDailySalesReportDto.getDate()))
                     .retrieve()
                     .bodyToMono(new ParameterizedTypeReference<List<SoldItemDaySumDto>>() {})
@@ -88,6 +88,11 @@ public class ReportServiceImpl implements ReportService {
                 .build();
     }
 
+    @Override
+    public ResponseDailySalesReportDto getAvgSalesTop5ById(Integer itemId) {
+        return null;
+    }
+
     private List<Integer> getProductIdList( List<SoldItemDaySumDto> soldItemSumDtoList) {
         List<Integer> productIdList=new ArrayList<>();
         for(SoldItemDaySumDto soldItemDaySumDto:soldItemSumDtoList){
@@ -96,3 +101,6 @@ public class ReportServiceImpl implements ReportService {
         return productIdList;
     }
 }
+
+
+

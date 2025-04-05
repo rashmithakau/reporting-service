@@ -24,4 +24,12 @@ public class ReportController {
                 "Successfully retrieved daily sales report data",responseDailySalesReportDto),
                 HttpStatus.OK);
     }
+
+    @GetMapping("avg-sales")
+    public ResponseEntity<StandardResponse> getAvgSalesTop5ById(@RequestParam Integer itemId){
+        ResponseDailySalesReportDto responseSalesData = reportService.getAvgSalesTop5ById(itemId);
+        return new ResponseEntity<>(new StandardResponse(HttpStatus.OK.value(),
+                "Successfully retrieved daily sales report data",responseSalesData),
+                HttpStatus.OK);
+    }
 }

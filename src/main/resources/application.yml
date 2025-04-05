@@ -1,7 +1,16 @@
 spring:
   application:
-    name: PRODUCT-SERVICE
+    name: REPORTING-SERVICE
+  datasource:
+    url : jdbc:mysql://35.222.69.207:3306/notiDb?createDatabaseIfNotExist=true
+    username : springuser
+    password : springuserpwd
+    hikari:
+      max-lifetime: 1800000       # 30 min
+      idle-timeout: 600000        # 10 min
+      keepalive-time: 300000      # 5 min
+  jpa :
+    hibernate :
+      ddl-auto : update
 server:
-  port: 8080
-
-
+  port: 8087
