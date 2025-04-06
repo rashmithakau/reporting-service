@@ -9,7 +9,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
@@ -17,20 +16,25 @@ import org.springframework.web.util.HtmlUtils;
 
 
 @RestController
-@RequestMapping("/notifications")
+@RequestMapping("api/v1/notifications")
 @AllArgsConstructor
+@CrossOrigin
 public class NotificationController {
 
     private final NotificationService notificationService;
 
     private final SimpMessagingTemplate messagingTemplate;
 
-    @PostMapping
-    public ResponseEntity<StandardResponse> saveNotification(@RequestBody NotificationDTO notificationDTO) {
-        // Notify all subscribers about the new notification
-        messagingTemplate.convertAndSend("/topic/notifications", notificationDTO);
+    @PostMapping()
+    public ResponseEntity<StandardResponse> saveNotification(@RequestBody NotificationDTO notificationDTO,@RequestParam Boolean isNotify) {
+        if(isNotify) {
+            // Notify all subscribers about the new notification
+            messagingTemplate.convertAndSend("/topic/notifications", notificationDTO);
+        }
+
 
         System.out.println(notificationDTO);
+        notificationService.saveNotification(notificationDTO);
 
         // Create a standard response
         StandardResponse response = new StandardResponse();
@@ -41,8 +45,8 @@ public class NotificationController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @GetMapping
-    public ResponseEntity<StandardResponse> getAllNotifications() {
+    @GetMapping()
+    public ResponseEntity<StandardResponse> getAllNotifications(@RequestParam Integer outletId) {
         StandardResponse response=new StandardResponse();
         response.setCode(HttpStatus.OK.value());
         response.setMessage(HttpStatus.OK.getReasonPhrase());
@@ -50,12 +54,13 @@ public class NotificationController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @GetMapping("/{userId}")
-    public ResponseEntity<StandardResponse> getNotificationsByUserId(@PathVariable Long userId) {
+    @GetMapping("/{outletId}")
+    public ResponseEntity<StandardResponse> getNotificationsByUserId(@PathVariable Long outletId) {
         StandardResponse response = new StandardResponse();
         response.setCode(HttpStatus.OK.value());
         response.setMessage(HttpStatus.OK.getReasonPhrase());
-        response.setData(notificationService.getNotificationsByUserId(userId));
+        response.setData(notificationService.getNotificationsByOutletId(outletId));
+        System.out.println("Recived reqest");
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
@@ -63,10 +68,9 @@ public class NotificationController {
     // For direct messaging
     @MessageMapping("/send-notification")
     @SendTo("/topic/notifications")
-    public NotificationDTO sendNotification(@Payload NotificationDTO message) throws Exception {
-        notificationService.saveNotification(message);
-        System.out.println(message);
-        return message;
+    public Notification sendNotification(NotificationMessage message) throws Exception {
+        Thread.sleep(1000); // Simulated delay
+        return new Notification("Hiii");
     }
 
     // For targeted user notifications

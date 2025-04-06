@@ -19,7 +19,7 @@ public class Notification {
     private Long id;
 
     @Column(nullable = false)
-    private Long userId;
+    private Long outletId;
 
     @Column(nullable = false, length = 500)
     private String message;
