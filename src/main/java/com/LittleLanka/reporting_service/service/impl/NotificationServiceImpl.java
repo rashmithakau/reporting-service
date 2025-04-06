@@ -6,6 +6,11 @@ import com.LittleLanka.reporting_service.repository.NotificationRepository;
 import com.LittleLanka.reporting_service.service.NotificationService;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,12 +26,13 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public NotificationDTO saveNotification(NotificationDTO dto) {
         Notification notification = new Notification();
-        notification.setUserId(dto.getUserId());
+        notification.setOutletId(dto.getOutletId());
         notification.setMessage(dto.getMessage());
-        notification.setDate(dto.getDate());
+        notification.setDate(LocalDateTime.now());
+
         Notification savedNotification = notificationRepository.save(notification);
         return new NotificationDTO(
-                savedNotification.getUserId(),
+                savedNotification.getOutletId(),
                 savedNotification.getMessage(),
                 savedNotification.getDate()
         );
@@ -37,7 +43,7 @@ public class NotificationServiceImpl implements NotificationService {
         return notificationRepository.findAll()
                 .stream()
                 .map(notification -> new NotificationDTO(
-                        notification.getUserId(),
+                        notification.getOutletId(),
                         notification.getMessage(),
                         notification.getDate()
                 ))
@@ -45,7 +51,10 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public List<Notification> getNotificationsByUserId(Long userId) {
-        return notificationRepository.findByUserId(userId);
+    public List<Notification> getNotificationsByOutletId(Long outletId) {
+        List<Long> outletIds = new ArrayList<>(Arrays.asList(outletId, -1L)); // Example outlet IDs
+        List<Notification> notifications = notificationRepository.findTop8ByOutletIdInOrderByDateDesc(outletIds);
+
+        return notifications;
     }
 }

@@ -9,5 +9,5 @@ public interface NotificationService {
     NotificationDTO saveNotification(NotificationDTO notificationDTO);
     List<NotificationDTO> getAllNotifications();
 
-    List<Notification> getNotificationsByUserId(Long userId);
+    List<Notification> getNotificationsByOutletId(Long userId);
 }

@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @ToString
 public class NotificationDTO {
-    private Long userId;
+    private Long outletId;
     private String message;
     private LocalDateTime date;
 }
